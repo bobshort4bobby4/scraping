@@ -1,5 +1,6 @@
 import requests # pip install requests
 from bs4 import BeautifulSoup as bs # pip install beautifulsoup4
+import json
 
 # Load the webpage content
 r = requests.get("https://www.toplinebolands.ie/garden/c-1069.html")
@@ -10,7 +11,7 @@ t = requests.get("https://www.toplinebolands.ie/diy-amp-trade/c-1877.html")
 soup = bs(r.content, "html.parser")
 gazpacho = bs(s.content, "html.parser")
 consomme = bs(t.content,"html.parser")
-print("just checking")
+
 # create an empty list
 
 product_inv_details = []
@@ -50,12 +51,24 @@ for index, item in enumerate(diy_items[0:50]):
     product_inv_details.append(title)
 
 
-print(product_inv_details)
-print(len(product_inv_details))
-print(len(garden_items))
-print(len(powertool_items))
-print(len(diy_items))
+# save as json
 
-for product in product_inv_details:
-    print(product)
+with open("hardware_data.json", "w") as outfile:
+    json.dump( product_inv_details, outfile)
+
+# save image urls to file
+
+for link in product_inv_details:
+    image_url = link["image_url"]
+    index = link["prod_id"]
+    r = requests.get(image_url).content
+   
+  
+
+    with open(f"images/product_{index}.png", 'wb') as outfile:
+            outfile.write(r)
+
+
+   
+# list(map(print, product_inv_details))
 
